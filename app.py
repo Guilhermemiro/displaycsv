@@ -1,30 +1,30 @@
-from flask import Flask, request, render_template
+from flask import Flask, render_template
 import pandas as pd
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # --- IMPORTANTE ---
+    # Coloque aqui o nome EXATO do seu arquivo CSV
+    # (Aquele que você subiu para o GitHub no Passo 2)
+    # Pela análise que fiz, o nome dele é 'dados.csv.csv'
+    file_name = 'dados.csv.csv' 
 
-@app.route('/display', methods=['POST'])
-def display_file():
-    file = request.files['file']
-    if not file:
-        return "No file"
-
-    # Tenta ler o arquivo com diferentes codificações
     try:
-        df = pd.read_csv(file, delimiter=";")
-    except UnicodeDecodeError:
-        file.seek(0)  # Reseta o ponteiro do arquivo
-        try:
-            df = pd.read_csv(file, encoding='latin1', delimiter=";")
-        except UnicodeDecodeError:
-            file.seek(0)  # Reseta o ponteiro do arquivo
-            df = pd.read_csv(file, encoding='ISO-8859-1', delimiter=";")
+        # Lê o arquivo CSV que está NA MESMA PASTA do app.py
+        # Pela análise que fiz, o seu arquivo usa VÍRGULA (,) como separador
+        df = pd.read_csv(file_name, sep=',') 
+        
+    except FileNotFoundError:
+        # Mensagem de erro se o arquivo não for encontrado no repositório
+        return "<h1>Erro: Arquivo CSV não encontrado!</h1><p>Verifique se o arquivo '{}' está no repositório.</p>".format(file_name)
+    except Exception as e:
+        # Outro erro (ex: separador errado)
+        return "<h1>Erro ao ler o CSV</h1><p>{}</p>".format(e)
 
-    # Renderiza o template com os dados do arquivo CSV
+    # Renderiza o template, passando a tabela HTML
+    # (Vou assumir que o template se chama 'display.html', que deve estar no projeto original)
     return render_template('display.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
 
 if __name__ == '__main__':
