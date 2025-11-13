@@ -9,7 +9,7 @@ def index():
     # Coloque aqui o nome EXATO do seu arquivo CSV
     # (Aquele que você subiu para o GitHub no Passo 2)
     # Pela análise que fiz, o nome dele é 'dados.csv.csv'
-    file_name = 'dados.csv.csv' 
+    file_name = 'dados.csv' 
 
     try:
         # Lê o arquivo CSV que está NA MESMA PASTA do app.py
